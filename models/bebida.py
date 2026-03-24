@@ -1,0 +1,9 @@
+from pydantic import BaseModel, Field
+from typing import Optional
+
+class BebidaInput(BaseModel):
+    nome: str = Field(min_length=3, max_length=100)
+    tipo: str = Field(pattern="^(vinho|agua|refrigerante|suco|cerveja)$")
+    preco: float = Field(gt=0)
+    alcoolica: bool
+    volume_ml: int = Field(ge=50, le=2000)
