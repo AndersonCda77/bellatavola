@@ -2,27 +2,33 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-# Importando configurações
+# Configurações
 from config import settings
 
-# Importando os routers
+# Routers existentes
 from routers.pratos import router as pratos_router
 from routers.bebidas import router as bebidas_router
 from routers.pedidos import router as pedidos_router
 from routers.reservas import router as reservas_router
 
+# Novo router de ML
+from routers.predict import router as predict_router
+
 app = FastAPI(
     title=settings.app_name,
-    description="API do restaurante Bella Tavola",
+    description="API do restaurante Bella Tavola com predição de sobremesa",
     version=settings.version,
     debug=settings.debug
 )
 
-# Montando os routers com prefixo e tags
+# Incluindo todos os routers
 app.include_router(pratos_router,   prefix="/pratos",   tags=["Pratos"])
 app.include_router(bebidas_router,  prefix="/bebidas",  tags=["Bebidas"])
 app.include_router(pedidos_router,  prefix="/pedidos",  tags=["Pedidos"])
 app.include_router(reservas_router, prefix="/reservas", tags=["Reservas"])
+
+# Novo router de Machine Learning
+app.include_router(predict_router,  prefix="/ml",       tags=["ML"])
 
 @app.get("/")
 async def root():
@@ -31,7 +37,6 @@ async def root():
         "mensagem": "Bem-vindo à nossa API",
         "chef": "Marco Rossi",
         "cidade": "São Paulo",
-        "especialidade": "Massas artesanais",
         "versao": settings.version
     }
 
@@ -45,13 +50,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "erro": "Dados de entrada inválidos",
             "status": 422,
             "path": str(request.url),
-            "detalhes": [
-                {
-                    "campo": " -> ".join(str(loc) for loc in e["loc"]),
-                    "mensagem": e["msg"]
-                }
-                for e in exc.errors()
-            ]
+            "detalhes": exc.errors()
         }
     )
 
@@ -63,7 +62,6 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         content={
             "erro": exc.detail,
             "status": exc.status_code,
-            "path": str(request.url),
-            "detalhes": []
+            "path": str(request.url)
         }
     )
