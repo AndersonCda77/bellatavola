@@ -10,3 +10,15 @@ model.pkl
 .ipynb_checkpoints/
 .DS_Store
 __pycache__/
+
+# Ignorar ambientes virtuais antigos
+.venv-1/
+.venv-2/
+.venv-3/
+.venv*/
+
+# Ignorar ambientes virtuais antigos
+.venv-1/
+.venv-2/
+.venv-3/
+.venv*/
