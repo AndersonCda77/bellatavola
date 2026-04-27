@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:     # ← permite rodar manualmente
+  workflow_dispatch:
 
 jobs:
   verificar-api:
@@ -28,9 +28,9 @@ jobs:
       - name: Iniciar a API em background
         run: |
           uvicorn main:app --host 0.0.0.0 --port 8000 &
-          sleep 10
+          sleep 20   # aumentado para dar tempo de baixar o modelo
 
       - name: Verificar que a API responde
         run: |
-          curl --fail --retry 3 --retry-delay 2 http://localhost:8000/
+          curl --fail --retry 5 --retry-delay 3 http://localhost:8000/
           echo "✅ API respondeu com sucesso"
