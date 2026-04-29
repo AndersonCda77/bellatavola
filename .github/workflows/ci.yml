@@ -27,7 +27,7 @@ jobs:
       - name: Iniciar a API em background
         run: |
           uvicorn main:app &
-          sleep 8
+          sleep 10
 
       - name: Verificar que a API responde
         run: |
